@@ -4,6 +4,8 @@ namespace Blazervel\BladeBook;
 
 use ReflectionClass;
 
+use Blazervel\BladeBook\Support\CreateBladeView;
+
 use Illuminate\Support\{ Str, Collection };
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Component;
@@ -11,10 +13,44 @@ use Illuminate\View\Component;
 class BladeBook extends Component
 {
   public Collection $components;
+  public array $stateData;
 
   public function __construct()
   {
     $this->components();
+  }
+
+  public function __invoke(Container $container, Route $route)
+  {
+    return $this->render();
+  }
+
+  public function view(): string
+  {
+    return <<<'blade'
+      @extends('bladebook::app')
+      @section('content')
+        <div v-scope="{$state}" v-cloak @vue:mounted=\"mounted = true\">
+          <template v-if=\"mounted\">{$slot}</template>
+        </div>
+      @endsection
+    blade;
+  }
+
+  public function stateData(): array
+  {
+    return $this->stateData = [
+      'components' => $this->components->all(),
+    ];
+  }
+
+  public function render()
+  {
+    return View::make(CreateBladeView::fromString($this->view()), [
+      'components' => $this->components,
+      'state' => htmlspecialchars(json_encode($this->stateData())),
+      'slot' => View::make('bladebook::docs'),
+    ]);
   }
 
   public function components(): Collection
