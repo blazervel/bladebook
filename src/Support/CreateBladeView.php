@@ -1,6 +1,6 @@
 <?php
 
-namespace Blazervel\BladeBook\Support;
+namespace Blazervel\Bladebox\Support;
 
 use Illuminate\View\Component;
 

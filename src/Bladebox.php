@@ -1,19 +1,19 @@
 <?php
 
-namespace Blazervel\BladeBook;
+namespace Blazervel\Bladebox;
 
 use ReflectionClass;
 
-use Blazervel\BladeBook\Support\CreateBladeView;
-
+use Blazervel\Bladebox\Support\CreateBladeView;
+use Blazervel\Bladebox\Support\ReflectionComponent;
 use Illuminate\Routing\Route;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Support\Facades\{ View, Log };
+use Illuminate\Support\Facades\{ View, Log, File };
 use Illuminate\Support\{ Str, Collection, Js };
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Component;
 
-class BladeBook extends Component
+class Bladebox extends Component
 {
   public Collection $components;
   public array $stateData;
@@ -43,11 +43,11 @@ class BladeBook extends Component
   public function view(): string
   {
     return <<<'blade'
-      @extends('bladebook::app')
+      @extends('bladebox::app')
       @section('content')
         <div v-scope="{{ $state }}" v-cloak @vue:mounted="mounted = true; if(window.location.hash.length && (components[window.location.hash] || false)){ component = components[window.location.hash] }">
           <div v-if="mounted">
-            @include('bladebook::bladebook.index')
+            @include('bladebox::bladebox.index')
           </div>
         </div>
       @endsection
@@ -74,9 +74,17 @@ class BladeBook extends Component
 
   public function components(): Collection
   {
+    if (!File::ensureDirectoryExists(
+      base_path($this->componentDirectory)
+    )) :
+      return $this->components = new Collection([]);
+    endif;
+
     $componentClassFiles = (new FileSystem)->allFiles(
       base_path($this->componentDirectory)
     );
+
+    $components = [];
 
     foreach ($componentClassFiles as $file) :
       $path        = Str::remove('.php', $file->getRealPath());
@@ -84,6 +92,11 @@ class BladeBook extends Component
       $path        = Str::remove(base_path() . '/', $path);
       $className   = Str::replace('/', '\\', $path);
       $className   = Str::ucfirst($className); // app -> App
+
+      // $components[$key] = ReflectionComponent::make(
+      //   componentClassName: $className
+      // );
+
       $key         = $this->makeKey($className);
       $classParams = (new ReflectionClass($className))->getConstructor()->getParameters();
       $classParams = (new Collection($classParams))->map(function($parameter){ 
