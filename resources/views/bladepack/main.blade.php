@@ -108,7 +108,7 @@
 @empty
 
   <p class="flex flex-col items-center">
-    <x-bladepack::bladepack size="12" color="text-pink-400 opacity-20" />
+    <x-bladepack::icon.bladepack size="12" color="text-pink-400 opacity-20" />
     <div class="text-gray-500 dark:text-gray-500 text-xl text-center mt-5">
       @lang('bladepack::bladepack.you_dont_have_any_blade_components_yet')
     </div>

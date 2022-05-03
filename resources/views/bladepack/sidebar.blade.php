@@ -1,5 +1,5 @@
 <h2 class="text-base font-bold dark:text-gray-500 flex space-x-1 items-center">
-  <x-bladepack::bladepack size="6" color="text-pink-500 opacity-70"/>
+  <x-bladepack::icon.bladepack size="6" color="text-pink-500 opacity-70"/>
   <span>@lang('bladepack::bladepack.bladepack')</span>
 </h2>
 <p class="dark:text-gray-600 text-xs mt-6 border-l-2 pl-2 dark:border-gray-800">
