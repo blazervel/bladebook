@@ -66,7 +66,7 @@
     </div>
 
     <div v-if="tab === 'canvas'" class="relative">
-      <iframe src="{{ route('bladebox.canvas', ['component' => $component['key']]) }}" class="border-none absolute inset-0"></iframe>
+      <iframe src="{{ route('bladepack.canvas', ['component' => $component['key']]) }}" class="border-none absolute inset-0"></iframe>
     </div>
 
     <div class="prose dark:prose-invert prose-sm max-w-[37.5rem] mx-auto">
@@ -78,9 +78,9 @@
       
       <h3 id="implementation" class="relative group">
         <span class="absolute -left-5 top-1.5 opacity-70 group-hover:opacity-100">
-          <x-bladebox::icon.hashtag size="4" color="text-pink-500" />
+          <x-bladepack::icon.hashtag size="4" color="text-pink-500" />
         </span>
-        @lang('bladebox::bladebox.implementation')
+        @lang('bladepack::bladepack.implementation')
       </h3>
 
       <pre class="dark:bg-gray-800"><code v-text="`<x-${c.key}>
@@ -89,9 +89,9 @@
 
       <h3 id="implementation" class="relative group">
         <span class="absolute -left-5 top-1.5 opacity-70 group-hover:opacity-100">
-          <x-bladebox::icon.hashtag size="4" color="text-pink-500" />
+          <x-bladepack::icon.hashtag size="4" color="text-pink-500" />
         </span>
-        @lang('bladebox::bladebox.parameters')
+        @lang('bladepack::bladepack.parameters')
       </h3>
 
       <ul class="text-sm">
@@ -108,13 +108,13 @@
 @empty
 
   <p class="flex flex-col items-center">
-    <x-bladebox::icon.bladebox size="12" color="text-pink-400 opacity-20" />
+    <x-bladepack::bladepack size="12" color="text-pink-400 opacity-20" />
     <div class="text-gray-500 dark:text-gray-500 text-xl text-center mt-5">
-      @lang('bladebox::bladebox.you_dont_have_any_blade_components_yet')
+      @lang('bladepack::bladepack.you_dont_have_any_blade_components_yet')
     </div>
     <div class="flex justify-center space-x-4 mt-8">
-      <x-bladebox::button text="bladebox::bladebox.make_one_for_me" />
-      <x-bladebox::button secondary text="bladebox::bladebox.view_bladebox_components" />
+      <x-bladepack::button text="bladepack::bladepack.make_one_for_me" />
+      <x-bladepack::button secondary text="bladepack::bladepack.view_bladepack_components" />
     </div>
   </p>
 

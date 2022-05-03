@@ -1,11 +1,11 @@
 <?php
 
-namespace Blazervel\Bladebox\Providers;
+namespace Bladepack\Bladepack\Providers;
 
 use Illuminate\Support\Facades\{ Blade, View };
 use Illuminate\Support\ServiceProvider;
 
-class BladeboxServiceProvider extends ServiceProvider 
+class BladepackServiceProvider extends ServiceProvider 
 {
   private string $pathTo = __DIR__ . '/../..';
 
@@ -21,15 +21,15 @@ class BladeboxServiceProvider extends ServiceProvider
   private function loadViews()
   {
     $this->loadViewsFrom(
-      "{$this->pathTo}/resources/views", 'bladebox'
+      "{$this->pathTo}/resources/views", 'bladepack'
     );
   }
 
   private function loadComponents()
   {
     Blade::componentNamespace(
-      'Blazervel\\Bladebox\\View\\Components', 
-      'bladebox'
+      'Blazervel\\Bladepack\\View\\Components', 
+      'bladepack'
     );
   }
 
@@ -44,7 +44,7 @@ class BladeboxServiceProvider extends ServiceProvider
   {
     $this->loadTranslationsFrom(
       "{$this->pathTo}/lang", 
-      'bladebox'
+      'bladepack'
     );
   }
 
@@ -52,12 +52,12 @@ class BladeboxServiceProvider extends ServiceProvider
   {
     $this->app->booted(function () {
     
-      $appLayoutExists = View::exists($viewName = 'layouts.app') ?: View::exists($viewName = 'app') ?: ($viewName = 'bladebox::app');
+      $appLayoutExists = View::exists($viewName = 'layouts.app') ?: View::exists($viewName = 'app') ?: ($viewName = 'bladepack::app');
 
-      $viewName = 'bladebox::app'; // Need blank version of app layout to get styles etc.
+      $viewName = 'bladepack::app'; // Need blank version of app layout to get styles etc.
 
       View::composer([
-        'bladebox::bladebox.canvas',
+        'bladepack::bladepack.canvas',
       ], function ($view) use ($viewName) {
         $view->with('appLayout', $viewName);
       });

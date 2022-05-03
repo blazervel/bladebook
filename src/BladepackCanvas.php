@@ -1,10 +1,10 @@
 <?php
 
-namespace Blazervel\Bladebox;
+namespace Bladepack\Bladepack;
 
 use ReflectionClass;
 
-use Blazervel\Bladebox\Support\CreateBladeView;
+use Bladepack\Bladepack\Support\CreateBladeView;
 use Closure;
 use Illuminate\Routing\Route;
 use Illuminate\Contracts\Container\Container;
@@ -13,7 +13,7 @@ use Illuminate\Support\{ Str, Collection, Js };
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Component;
 
-class BladeboxCanvas extends Component
+class BladepackCanvas extends Component
 {
   public string|Closure $component;
 
@@ -28,7 +28,7 @@ class BladeboxCanvas extends Component
 
   public function render()
   {
-    return View::make('bladebox::bladebox.canvas', [
+    return View::make('bladepack::bladepack.canvas', [
       'component' => $this->component,
     ]);
   }
@@ -36,9 +36,11 @@ class BladeboxCanvas extends Component
   public function component(string $componentKey): string|Closure
   {
     $dummyParameters = [];
+
     $componentClass = (new Collection(explode('.', $componentKey)))->map(function($slug){
       return Str::ucfirst(Str::camel($slug));
     })->join('\\');
+
     $componentClass = "App\\View\\Components\\{$componentClass}";
 
     return (new $componentClass(...$dummyParameters))->render();

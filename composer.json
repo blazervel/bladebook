@@ -1,5 +1,5 @@
 {
-    "name": "blazervel/bladebox",
+    "name": "bladepack/bladepack",
     "description": "Component documentation package for Laravel Blade Components.",
     "license": "MIT",
     "authors": [
@@ -17,12 +17,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Blazervel\\Bladebox\\": "src"
+            "Blazervel\\Bladepack\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Blazervel\\Bladebox\\Tests\\": "tests"
+            "Blazervel\\Bladepack\\Tests\\": "tests"
         }
     },
     "config": {
@@ -31,7 +31,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Blazervel\\Bladebox\\Providers\\BladeboxServiceProvider"
+                "Blazervel\\Bladepack\\Providers\\BladepackServiceProvider"
             ]
         }
     }

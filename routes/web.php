@@ -5,16 +5,12 @@ use Illuminate\Support\Facades\{
   App 
 };
 
-use Blazervel\Bladebox\{
-  Bladebox,
-  BladeboxCanvas
+use Bladepack\Bladepack\{
+  Bladepack,
+  BladepackCanvas
 };
 
-if (App::environment('local')) :
-
-  Route::prefix('bladebox')->group(function(){
-    Route::get('/', '\\' . Bladebox::class)->name('bladebox');
-    Route::get('{component}/canvas', '\\' . BladeboxCanvas::class)->name('bladebox.canvas');
-  });
-
-endif;
+Route::prefix('bladepack')->group(function(){
+  Route::get('/', '\\' . Bladepack::class)->name('bladepack');
+  Route::get('{component}/canvas', '\\' . BladepackCanvas::class)->name('bladepack.canvas');
+});

@@ -2,14 +2,14 @@
 
   <div class="w-48 flex-shrink-0 overflow-scroll">
     <div class="sticky top-0 py-10">
-      @include('bladebox::bladebox.sidebar')
+      @include('bladepack::bladepack.sidebar')
     </div>
   </div>
 
   <div class="overflow-y-auto flex-1 p-10">
     <div class="shadow-2xl dark:shadow-gray-600 max-w-7xl mx-auto rounded-3xl h-full bg-white dark:bg-black">
       <div class="mx-auto max-w-2xl p-4">
-        @include('bladebox::bladebox.main')
+        @include('bladepack::bladepack.main')
       </div>
     </div>
   </div>
@@ -19,5 +19,5 @@
 </div>
 
 <div>
-  @include('bladebox::bladebox.search')
+  @include('bladepack::bladepack.search')
 </div>

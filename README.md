@@ -1,5 +1,5 @@
 🚨 ***PACKAGE IS STILL IN EARLY DEVELOPMENT (PRE-V1)*** 🚨
 
-# Bladebox
+# Bladepack
 
 Documentation coming soon...

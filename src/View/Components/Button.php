@@ -1,6 +1,6 @@
 <?php
 
-namespace Blazervel\Bladebox\View\Components;
+namespace Bladepack\Bladepack\View\Components;
 
 use Illuminate\View\Component;
 
@@ -27,6 +27,6 @@ class Button extends Component
    */
   public function render()
   {
-    return view('bladebox::components.button');
+    return view('bladepack::components.button');
   }
 }

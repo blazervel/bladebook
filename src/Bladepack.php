@@ -1,11 +1,11 @@
 <?php
 
-namespace Blazervel\Bladebox;
+namespace Bladepack\Bladepack;
 
 use ReflectionClass;
 
-use Blazervel\Bladebox\Support\CreateBladeView;
-use Blazervel\Bladebox\Support\ReflectionComponent;
+use Bladepack\Bladepack\Support\CreateBladeView;
+use Bladepack\Bladepack\Support\ReflectionComponent;
 use Illuminate\Routing\Route;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Facades\{ View, Log, File };
@@ -13,7 +13,7 @@ use Illuminate\Support\{ Str, Collection, Js };
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Component;
 
-class Bladebox extends Component
+class Bladepack extends Component
 {
   public Collection $components;
   public array $stateData;
@@ -43,11 +43,11 @@ class Bladebox extends Component
   public function view(): string
   {
     return <<<'blade'
-      @extends('bladebox::app')
+      @extends('bladepack::app')
       @section('content')
         <div v-scope="{{ $state }}" v-cloak @vue:mounted="mounted = true; if(window.location.hash.length && (components[window.location.hash] || false)){ component = components[window.location.hash] }">
           <div v-if="mounted">
-            @include('bladebox::bladebox.index')
+            @include('bladepack::bladepack.index')
           </div>
         </div>
       @endsection

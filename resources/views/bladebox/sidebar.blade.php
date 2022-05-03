@@ -1,10 +1,10 @@
 <h2 class="text-base font-bold dark:text-gray-500 flex space-x-1 items-center">
-  <x-bladebox::icon.bladebox size="6" color="text-pink-500 opacity-70"/>
-  <span>@lang('bladebox::bladebox.bladebox')</span>
+  <x-bladepack::bladepack size="6" color="text-pink-500 opacity-70"/>
+  <span>@lang('bladepack::bladepack.bladepack')</span>
 </h2>
 <p class="dark:text-gray-600 text-xs mt-6 border-l-2 pl-2 dark:border-gray-800">
   {!! trans_choice(
-    'bladebox::bladebox.you_currently_have_x_components', 
+    'bladepack::bladepack.you_currently_have_x_components', 
     count($components)
   ) !!}
 </p>
@@ -21,14 +21,14 @@
 
     <!--
     <div v-if="c.isDirectory" class="pt-0.5">
-      <x-bladebox::icon.folder v-if="!c.active" color="text-pink-500 opacity-50" />
-      <x-bladebox::icon.folder-open v-if="c.active" color="text-pink-500" />
+      <x-bladepack::icon.folder v-if="!c.active" color="text-pink-500 opacity-50" />
+      <x-bladepack::icon.folder-open v-if="c.active" color="text-pink-500" />
     </div>
     -->
 
     <div v-if="!c.isDirectory" class="pt-0.5">
-      <x-bladebox::icon.document v-if="!c.active" color="text-pink-500 group-hover:opacity-100 transition-colors opacity-50" />
-      <x-bladebox::icon.document-text v-if="c.active" color="text-pink-500" />
+      <x-bladepack::icon.document v-if="!c.active" color="text-pink-500 group-hover:opacity-100 transition-colors opacity-50" />
+      <x-bladepack::icon.document-text v-if="c.active" color="text-pink-500" />
     </div>
 
     <div 
