@@ -28,7 +28,7 @@ class BladepackServiceProvider extends ServiceProvider
   private function loadComponents()
   {
     Blade::componentNamespace(
-      'Blazervel\\Bladepack\\View\\Components', 
+      'Bladepack\\Bladepack\\View\\Components', 
       'bladepack'
     );
   }
