@@ -38,7 +38,7 @@ class BladepackCanvas extends Component
     $dummyParameters = [];
 
     $componentClass = (new Collection(explode('.', $componentKey)))->map(function($slug){
-      return Str::ucfirst(Str::camel($slug));
+      return Str::studly($slug);
     })->join('\\');
 
     $componentClass = "App\\View\\Components\\{$componentClass}";

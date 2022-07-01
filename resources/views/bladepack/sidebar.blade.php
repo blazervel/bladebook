@@ -9,38 +9,59 @@
   ) !!}
 </p>
 
-<div class="mt-6 space-y-2">
+<div class="mt-6 space-y-1.5">
 
-  <button 
-    v-for="c in components" 
-    v-key="c.key" 
-    @click="component = c" 
-    v-effect="c.active = component && component.key === c.key" 
-    class="flex items-start space-x-1 group"
-  >
+  <div v-for="folder in folders">
 
-    <!--
-    <div v-if="c.isDirectory" class="pt-0.5">
-      <x-bladepack::icon.folder v-if="!c.active" color="text-pink-500 opacity-50" />
-      <x-bladepack::icon.folder-open v-if="c.active" color="text-pink-500" />
+    <button
+      @click="folder.open = !folder.open; if (folder.parentComponent) { component = folder.parentComponent; window.location.hash = folder.parentComponent.key; }"
+      v-effect="folder.active = component && component.key === folder.parentComponent.key" 
+      class="group flex items-center space-x-1"
+      v-if="folder.key != 'none'"
+    >
+      <div class="pt-0.5">
+        <x-bladepack::icon.folder v-if="!(folder.open || folder.active)" color="text-pink-500 opacity-50" />
+        <x-bladepack::icon.folder-open v-if="(folder.open || folder.active)" color="text-pink-500 opacity-50" />
+      </div>
+
+      <div 
+        class="text-sm"
+        v-bind:class="( 
+          folder.parentComponent && folder.active 
+            ? 'font-medium text-gray-900 dark:text-gray-200' 
+            : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors' 
+      )">
+        <span class="truncate" v-text="(folder.parentComponent && folder.parentComponent.name) || folder.name"></span>
+      </div>
+    </button>
+
+    <div v-if="folder.key === 'none' || folder.open" class="mt-1.5 space-y-1.5" v-bind:class="{ 'pl-4': folder.key !== 'none' }">
+      <button 
+        v-for="c in folder.components" 
+        v-key="c.key" 
+        @click="component = c; window.location.hash = c.key"
+        v-effect="c.active = component && component.key === c.key" 
+        class="flex items-start space-x-1 group"
+      >
+
+        <div class="pt-0.5">
+          <x-bladepack::icon.document v-if="!c.active" color="text-pink-500 group-hover:opacity-100 transition-colors opacity-50" />
+          <x-bladepack::icon.document-text v-if="c.active" color="text-pink-500" />
+        </div>
+
+        <div 
+          class="text-sm"
+          v-bind:class="( 
+            c.active 
+              ? 'font-medium text-gray-900 dark:text-gray-200' 
+              : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors' 
+        )">
+          <span class="truncate">@{{ c.name }}</span>
+        </div>
+
+      </button>
     </div>
-    -->
 
-    <div v-if="!c.isDirectory" class="pt-0.5">
-      <x-bladepack::icon.document v-if="!c.active" color="text-pink-500 group-hover:opacity-100 transition-colors opacity-50" />
-      <x-bladepack::icon.document-text v-if="c.active" color="text-pink-500" />
-    </div>
-
-    <div 
-      class="text-sm"
-      v-bind:class="( 
-        c.active 
-          ? 'font-medium text-gray-900 dark:text-gray-200' 
-          : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors' 
-    )">
-      <span v-text="c.inDirectory" class="opacity-80"></span>@{{ c.name }}
-    </div>
-
-  </button>
+  </div>
 
 </div>

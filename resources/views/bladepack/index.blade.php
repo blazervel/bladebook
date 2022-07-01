@@ -1,6 +1,6 @@
 <div class="flex items-stretch h-screen px-6 lg:px-12 bg-gray-50 dark:bg-black">
 
-  <div class="w-48 flex-shrink-0 overflow-scroll">
+  <div class="w-48 flex-shrink-0 overflow-y-hidden hover:overflow-y-scroll">
     <div class="sticky top-0 py-10">
       @include('bladepack::bladepack.sidebar')
     </div>

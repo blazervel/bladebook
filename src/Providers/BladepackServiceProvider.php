@@ -16,6 +16,7 @@ class BladepackServiceProvider extends ServiceProvider
     $this->loadRoutes();
     $this->loadTranslations();
     $this->loadViewComposers();
+    $this->loadConfig();
   }
 
   private function loadViews()
@@ -63,6 +64,13 @@ class BladepackServiceProvider extends ServiceProvider
       });
       
     });
+  }
+
+  private function loadConfig()
+  {
+    $this->publishes([
+      "{$this->pathTo}/config/bladepack.php" => config_path('bladepack.php'),
+    ]);
   }
 
 }

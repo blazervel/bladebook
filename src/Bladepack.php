@@ -15,23 +15,18 @@ use Illuminate\View\Component;
 
 class Bladepack extends Component
 {
-  public Collection $components;
   public array $stateData;
-  private string $componentDirectory = 'app/View/Components';
-
-  public function __construct()
-  {
-    $this->components();
-  }
 
   public function stateData(): array
   {
     return $this->stateData = [
       'mounted'    => false,
       'counter'    => 0,
-      'components' => $this->components->all(),
-      'component'  => $this->components->first(),
+      'folders'    => $this->componentFolders()->all(),
+      'components' => $this->components()->all(),
+      'component'  => $this->components()->first(),
       'showSearch' => false,
+      'tab'        => 'docs',
     ];
   }
 
@@ -45,7 +40,7 @@ class Bladepack extends Component
     return <<<'blade'
       @extends('bladepack::app')
       @section('content')
-        <div v-scope="{{ $state }}" v-cloak @vue:mounted="mounted = true; if(window.location.hash.length && (components[window.location.hash] || false)){ component = components[window.location.hash] }">
+        <div v-scope="{{ $state }}" v-cloak @vue:mounted="mounted = true; if (window.location.hash && (components[window.location.hash.replace('#', '')] || false)){ component = components[window.location.hash.replace('#', '')]; folders[window.location.hash.replace('#', '')].active = true; folders[component.folderKey].open = true; }">
           <div v-if="mounted">
             @include('bladepack::bladepack.index')
           </div>
@@ -57,7 +52,8 @@ class Bladepack extends Component
   public function render()
   {
     return View::make(CreateBladeView::fromString($this->view()), [
-      'components' => $this->components,
+      'folders' => $this->componentFolders(),
+      'components' => $this->components(),
       'state' => Js::from($this->stateData()),
     ]);
   }
@@ -74,56 +70,100 @@ class Bladepack extends Component
 
   public function components(): Collection
   {
-    if (!File::ensureDirectoryExists(
-      base_path($this->componentDirectory)
+    $compDir = 'resources/views/components';
+
+    if (!File::exists(
+      $compDir = base_path($compDir)
     )) :
-      return $this->components = new Collection([]);
+      return new Collection([]);
     endif;
 
-    $componentClassFiles = (new FileSystem)->allFiles(
-      base_path($this->componentDirectory)
-    );
+    $componentViewFiles = (new FileSystem)->allFiles($compDir);
 
     $components = [];
 
-    foreach ($componentClassFiles as $file) :
-      $path        = Str::remove('.php', $file->getRealPath());
-      $name        = basename($path);
-      $path        = Str::remove(base_path() . '/', $path);
-      $className   = Str::replace('/', '\\', $path);
-      $className   = Str::ucfirst($className); // app -> App
+    foreach ($componentViewFiles as $file) :
+      $path      = Str::remove('.blade.php', $file->getRealPath());
+      $path      = Str::remove('.php', $path);
+      $path      = Str::remove(base_path() . '/resources/views/components/', $path);
+      $name      = Str::remove('-', Str::title(basename($path)));
+      $key       = Str::replace('/', '.', $path);
+      $className = 'App\\View\\Components\\';
+      $className.= Str::studly($name);
 
-      // $components[$key] = ReflectionComponent::make(
-      //   componentClassName: $className
-      // );
+      if (!class_exists($className)) :
 
-      $key         = $this->makeKey($className);
-      $classParams = (new ReflectionClass($className))->getConstructor()->getParameters();
-      $classParams = (new Collection($classParams))->map(function($parameter){ 
-        $type = $parameter->getType();
-        return [
-          'name'       => $parameter->name,
-          'position'   => $parameter->getPosition(),
-          'type'       => $type && get_class($type) === 'ReflectionNamedType' ? $type->getName() : null,
-          'allowsNull' => $type && get_class($type) === 'ReflectionNamedType' ? $type->allowsNull() : null,
-          'default'    => $parameter->isDefaultValueAvailable() ? json_encode($parameter->getDefaultValue()) : 'none',
-        ]; 
-      })->all();
+        $className = null;
+
+      else :
+      
+        // $components[$key] = ReflectionComponent::make(
+        //   componentClassName: $className
+        // );
+
+        $classParams = (new ReflectionClass($className))->getConstructor()->getParameters();
+        $classParams = (new Collection($classParams))->map(function($parameter) { 
+          $type = $parameter->getType();
+          return [
+            'name'       => $parameter->name,
+            'position'   => $parameter->getPosition(),
+            'type'       => $type && get_class($type) === 'ReflectionNamedType' ? $type->getName() : null,
+            'allowsNull' => $type && get_class($type) === 'ReflectionNamedType' ? $type->allowsNull() : null,
+            'default'    => $parameter->isDefaultValueAvailable() ? json_encode($parameter->getDefaultValue()) : 'none',
+          ]; 
+        })->all();
+
+      endif;
+
+      $inDirectory = explode('/', $path);
+      $fileName = array_pop($inDirectory);
+      $inDirectory = (new Collection($inDirectory))->join('/') ?: null;
 
       $components[$key] = [
         'name'        => $name,
         'key'         => $key,
         'description' => '', // Use a flatfile db driver? (e.g. https://github.com/ryangjchandler/orbit)
         'className'   => $className,
-        'parameters'  => $classParams,
+        'parameters'  => $classParams ?? [],
         'active'      => false,
-        'components'  => [],
-        'inDirectory' => Str::remove('app/View/Components/', Str::remove($name, $path)),
-        'isDirectory' => false,
+        'inDirectory' => $inDirectory,
+        'path'        => "resources/views/components/{$path}.blade.php",
       ];
 
     endforeach;
 
-    return $this->components = new Collection($components);
+    return new Collection($components);
+  }
+
+  public function componentFolders()
+  {
+    $components = $this->components();
+    $folders = [];
+
+    foreach ($components as $component) :
+      $key = Str::replace('/', '.', $component['inDirectory'] ?: 'none');
+      
+      $folder = $folders[$key] ?? [
+        'key'             => $key,
+        'name'            => Str::title(Str::replace('.', '/', $key)),
+        'active'          => false,
+        'open'            => $key === 'none',
+        'parentComponent' => null,
+        'components'      => []
+      ];
+
+      $component['folderKey'] = $key;
+
+      $folder['components'][$component['key']] = $component;
+
+      if ($parentComponent = $components->where('key', $key)->first()) :
+        unset($folders['none']['components'][$key]);
+        $folder['parentComponent'] = $parentComponent;
+      endif;
+
+      $folders[$key] = $folder;
+    endforeach;
+
+    return (new Collection($folders))->sortBy('name', SORT_STRING);
   }
 }
