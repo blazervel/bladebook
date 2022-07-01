@@ -14,9 +14,9 @@
   <div v-for="folder in folders">
 
     <button
-      @click="folder.open = !folder.open; if (folder.parentComponent) { component = folder.parentComponent; window.location.hash = folder.parentComponent.key; }"
+      @click="folder.open = !folder.open; if (folder.parentComponent) { setComponent(folder.parentComponent); }"
       v-effect="folder.active = component && component.key === folder.parentComponent.key" 
-      class="group flex items-center space-x-1"
+      class="group flex items-start space-x-1 w-full"
       v-if="folder.key != 'none'"
     >
       <div class="pt-0.5">
@@ -41,7 +41,7 @@
         v-key="c.key" 
         @click="component = c; window.location.hash = c.key"
         v-effect="c.active = component && component.key === c.key" 
-        class="flex items-start space-x-1 group"
+        class="group flex items-start space-x-1 w-full"
       >
 
         <div class="pt-0.5">

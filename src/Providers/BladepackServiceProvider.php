@@ -70,7 +70,7 @@ class BladepackServiceProvider extends ServiceProvider
   {
     $this->publishes([
       "{$this->pathTo}/config/bladepack.php" => config_path('bladepack.php'),
-    ]);
+    ], 'bladepack');
   }
 
 }

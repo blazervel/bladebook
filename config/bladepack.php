@@ -1,5 +1,7 @@
 <?php
 
 return [
-    'auto_import' => true,
+    'except' => [],
+    'only' => null, //[]
+    'packs' => [],
 ];

@@ -8,7 +8,7 @@ use Bladepack\Bladepack\Support\CreateBladeView;
 use Bladepack\Bladepack\Support\ReflectionComponent;
 use Illuminate\Routing\Route;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Support\Facades\{ View, Log, File };
+use Illuminate\Support\Facades\{ View, Config, File };
 use Illuminate\Support\{ Str, Collection, Js };
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Component;
@@ -40,7 +40,7 @@ class Bladepack extends Component
     return <<<'blade'
       @extends('bladepack::app')
       @section('content')
-        <div v-scope="{{ $state }}" v-cloak @vue:mounted="mounted = true; if (window.location.hash && (components[window.location.hash.replace('#', '')] || false)){ component = components[window.location.hash.replace('#', '')]; folders[window.location.hash.replace('#', '')].active = true; folders[component.folderKey].open = true; }">
+        <div v-scope="{{ $state }}" v-cloak @vue:mounted="mounted = true">
           <div v-if="mounted">
             @include('bladepack::bladepack.index')
           </div>
@@ -71,6 +71,8 @@ class Bladepack extends Component
   public function components(): Collection
   {
     $compDir = 'resources/views/components';
+    $except = Config::get('bladepack.except') ?: [];
+    $only = Config::get('bladepack.only');
 
     if (!File::exists(
       $compDir = base_path($compDir)
@@ -90,6 +92,14 @@ class Bladepack extends Component
       $key       = Str::replace('/', '.', $path);
       $className = 'App\\View\\Components\\';
       $className.= Str::studly($name);
+
+      if ($only !== null && !in_array($key, $only)) :
+        continue;
+      endif;
+
+      if (in_array($key, $except)) :
+        continue;
+      endif;
 
       if (!class_exists($className)) :
 
@@ -111,23 +121,54 @@ class Bladepack extends Component
             'allowsNull' => $type && get_class($type) === 'ReflectionNamedType' ? $type->allowsNull() : null,
             'default'    => $parameter->isDefaultValueAvailable() ? json_encode($parameter->getDefaultValue()) : 'none',
           ]; 
-        })->all();
+        })->sortBy('position')->all();
 
       endif;
 
       $inDirectory = explode('/', $path);
       $fileName = array_pop($inDirectory);
       $inDirectory = (new Collection($inDirectory))->join('/') ?: null;
+      $packs = Config::get("bladepack.packs.{$key}") ?: [];
+
+      // collect($component['props'])
+      //   ->filter(fn ($param) => !$param['allowsNull'])
+      //   ->map(fn ($param) => [$param['name'] => !in_array($param['type']) ? new $param['type'] : 1])
+      //   ->collapse()
+      //   ->all();
+
+      $packs = collect($packs)->map(function ($pack) {
+
+        $pack['props'] = collect($pack['props'])->map(function ($val, $key) {
+
+          if (!(is_array($val) && @class_exists(array_keys($val)[0]))) :
+            return $val;
+          endif;
+
+          $className = array_keys($val)[0];
+          $classParameters = array_values($val)[0];
+
+          if (is_array($classParameters)) : 
+            return new $className($classParameters);
+          else :
+            return new $className;
+          endif;
+
+        })->all();
+
+        return $pack;
+
+      })->all();
 
       $components[$key] = [
         'name'        => $name,
         'key'         => $key,
         'description' => '', // Use a flatfile db driver? (e.g. https://github.com/ryangjchandler/orbit)
         'className'   => $className,
-        'parameters'  => $classParams ?? [],
+        'props'       => $classParams ?? [],
         'active'      => false,
         'inDirectory' => $inDirectory,
         'path'        => "resources/views/components/{$path}.blade.php",
+        'packs'       => $packs,
       ];
 
     endforeach;

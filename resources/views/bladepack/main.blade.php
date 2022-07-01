@@ -1,47 +1,88 @@
 @forelse($components as $component)
 
-  <div v-if="component.key === '{{ $component['key'] }}'" class="relative py-12 lg:px-12">
+  <div v-if="component && component.key === '{{ $component['key'] }}'" class="relative py-12 lg:px-12">
 
-    <div v-if="tab === 'canvas'" class="relative">
-      <iframe src="{{ route('bladepack.canvas', ['component' => $component['key']]) }}" class="border-none absolute inset-0"></iframe>
-    </div>
+    <div class="max-w-[37.5rem] mx-auto space-y-6">
 
-    <div class="prose dark:prose-invert prose-sm max-w-[37.5rem] mx-auto">
+      <section class="prose dark:prose-invert prose-sm">
 
-      <h2 class="mb-0">
-        @{{ component.name }}
-      </h2>
+        <h1 class="mb-0" v-text="component.name"></h1>
 
-      <div
-        class="font-mono opacity-50 pb-2 border-b-2 border-gray-200 dark:border-gray-700"
-        v-text="component.className || component.path"></div>
+        <div class="mt-2 text-xs space-y-1 pb-2 border-b-2 border-gray-200 dark:border-gray-700 text-gray-500">
+          <div v-if="component.className" class="text-gray-500">
+            <span class="w-10 inline-block font-bold">@lang('bladepack::bladepack.class')</span>
+            <span class="font-mono select-all" v-text="component.className"></span>
+          </div>
+          <div v-if="component.path" class="text-gray-500">
+            <span class="w-10 inline-block font-bold">@lang('bladepack::bladepack.view')</span>
+            <span class="font-mono select-all" v-text="component.path"></span>
+          </div>
+          <div class="text-gray-500">
+            <span class="w-10 inline-block font-bold">@lang('bladepack::bladepack.tag')</span>
+            <span class="font-mono select-all"><span v-text="`<x-${component.key}>`"></span></span>
+          </div>
+        </div>
+
+      </section>
       
-      <h3 id="implementation" class="relative group">
-        <!-- <span class="absolute -left-5 top-1.5 opacity-70 group-hover:opacity-100">
-          <x-bladepack::icon.hashtag size="4" color="text-pink-500" />
-        </span> -->
-        @lang('bladepack::bladepack.implementation')
-      </h3>
+      <section class="prose dark:prose-invert prose-sm">
+        <h3 id="implementation" class="relative group">
+          <!-- <span class="absolute -left-5 top-1.5 opacity-70 group-hover:opacity-100">
+            <x-bladepack::icon.hashtag size="4" color="text-pink-500" />
+          </span> -->
+          @lang('bladepack::bladepack.implementation')
+        </h3>
 
-      <pre class="dark:bg-gray-800 select-all cursor-text"><code v-text="`<x-${component.key}>
-    Stuff goes here...
-</x-${component.key}>`"></code></pre>
+        {{--  ${component.props.map(param => param.name + '="' + param.type + '" ')} --}}
+        <pre class="dark:bg-gray-800 select-all cursor-text rounded p-4"><code v-text="`<x-${component.key}>
+      Stuff goes here...
+  </x-${component.key}>`"></code></pre>
 
-      <h3 id="implementation" class="relative group">
-        <!-- <span class="absolute -left-5 top-1.5 opacity-70 group-hover:opacity-100">
-          <x-bladepack::icon.hashtag size="4" color="text-pink-500" />
-        </span> -->
-        @lang('bladepack::bladepack.parameters')
-      </h3>
+        <h3 id="implementation" class="relative group">
+          <!-- <span class="absolute -left-5 top-1.5 opacity-70 group-hover:opacity-100">
+            <x-bladepack::icon.hashtag size="4" color="text-pink-500" />
+          </span> -->
+          @lang('bladepack::bladepack.props')
+        </h3>
 
-      <ul class="text-sm pl-4" v-if="component.parameters.length > 0">
-        <li v-for="parameter in component.parameters">
-          <span class="font-mono opacity-60" v-text="parameter.type"></span>
-          <span class="font-mono" v-text="'$' + parameter.name"></span>
-        </li>
-      </ul>
+        <ul class="text-sm pl-4" v-if="component.props.length > 0">
+          <li v-for="parameter in component.props">
+            <span class="font-mono opacity-60" v-text="parameter.type"></span>
+            <span class="font-mono" v-text="'$' + parameter.name"></span>
+          </li>
+        </ul>
 
-      <div v-if="component.parameters.length <= 0" class="text-gray-500 dark:text-gray-500">None</div>
+        <div v-if="component.props.length <= 0" class="text-gray-500 dark:text-gray-500">None</div>
+
+      </section>
+
+      @foreach($component['packs'] as $i => $pack)
+        <section>
+
+          <div class="prose dark:prose-invert prose-sm">
+            <h3 id="example-{{ $i }}" class="relative group">
+              <!-- <span class="absolute -left-5 top-1.5 opacity-70 group-hover:opacity-100">
+                <x-bladepack::icon.hashtag size="4" color="text-pink-500" />
+              </span> -->
+              @php $i++ @endphp
+              {{ "Example #{$i}" }}{{ !empty($pack['name']) ? ": {$pack['name']}" : '' }}
+            </h3>
+          </div>
+            
+          <div class="mt-2 p-4 bg-white rounded">
+            @if($component['className'])
+              @if($pack['props'])
+                {{ (new $component['className'](...$pack['props']))->render() }}
+              @else
+                {{ (new $component['className'])->render() }}
+              @endif
+            @else
+              @include(str_replace('.blade.php', '', str_replace('resources/views/', '', $component['path'])), $pack['props'] ?? [])
+            @endif
+          </div>
+        
+        </section>
+      @endforeach
 
     </div>
 

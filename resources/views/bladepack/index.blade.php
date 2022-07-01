@@ -6,8 +6,8 @@
     </div>
   </div>
 
-  <div class="overflow-y-auto flex-1 p-10">
-    <div class="shadow-2xl dark:shadow-gray-600 max-w-7xl mx-auto rounded-3xl h-full bg-white dark:bg-black">
+  <div class="flex-1 p-10">
+    <div class="overflow-y-auto shadow-2xl dark:shadow-gray-600 max-w-7xl mx-auto rounded-3xl h-full bg-white dark:bg-black">
       <div class="mx-auto max-w-2xl p-4">
         @include('bladepack::bladepack.main')
       </div>

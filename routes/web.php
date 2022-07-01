@@ -1,16 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\{ 
-  Route, 
-  App 
-};
+use Illuminate\Support\Facades\Route;
+use Bladepack\Bladepack\Bladepack;
 
-use Bladepack\Bladepack\{
-  Bladepack,
-  BladepackCanvas
-};
-
-Route::prefix('bladepack')->group(function(){
+Route::prefix('bladepack')->middleware('web', 'auth')->group(function(){
   Route::get('/', '\\' . Bladepack::class)->name('bladepack');
-  Route::get('{component}/canvas', '\\' . BladepackCanvas::class)->name('bladepack.canvas');
 });
