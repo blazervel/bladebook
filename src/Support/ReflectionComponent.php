@@ -2,74 +2,78 @@
 
 namespace Bladepack\Bladepack\Support;
 
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use ReflectionClass;
-use Illuminate\Support\{ Str, Collection };
 
 class ReflectionComponent
 {
-  private array $only = [
-    'name',
-    'key',
-    'description',
-    'className',
-    'parameters',
-    'active',
-    'components',
-    'inDirectory',
-    'isDirectory',
-  ];
+    private array $only = [
+        'name',
+        'key',
+        'description',
+        'className',
+        'parameters',
+        'active',
+        'components',
+        'inDirectory',
+        'isDirectory',
+    ];
 
-  public static function make(string $componentClassName): array
-  {
-    $key         = $this->makeKey($className);
-    $classParams = (new ReflectionClass($className))->getConstructor()->getParameters();
-    $classParams = (new Collection($classParams))->map(function($parameter){ 
-      $type = $parameter->getType();
-      return [
-        'name'       => $parameter->name,
-        'position'   => $parameter->getPosition(),
-        'type'       => $type && get_class($type) === 'ReflectionNamedType' ? $type->getName() : null,
-        'allowsNull' => $type && get_class($type) === 'ReflectionNamedType' ? $type->allowsNull() : null,
-        'default'    => $parameter->isDefaultValueAvailable() ? json_encode($parameter->getDefaultValue()) : 'none',
-      ]; 
-    })->all();
+    public static function make(string $componentClassName): array
+    {
+        $key = $this->makeKey($className);
+        $classParams = (new ReflectionClass($className))->getConstructor()->getParameters();
+        $classParams = (new Collection($classParams))->map(function ($parameter) {
+            $type = $parameter->getType();
 
-    $reflect = new self;
+            return [
+                'name' => $parameter->name,
+                'position' => $parameter->getPosition(),
+                'type' => $type && get_class($type) === 'ReflectionNamedType' ? $type->getName() : null,
+                'allowsNull' => $type && get_class($type) === 'ReflectionNamedType' ? $type->allowsNull() : null,
+                'default' => $parameter->isDefaultValueAvailable() ? json_encode($parameter->getDefaultValue()) : 'none',
+            ];
+        })->all();
 
-    $reflect->name        = $name;
-    $reflect->key         = $key;
-    $reflect->description = ''; // Use a flatfile db driver? (e.g. https://github.com/ryangjchandler/orbit)
-    $reflect->className   = $className;
+        $reflect = new self;
 
-    // Check for classless view
+        $reflect->name = $name;
+        $reflect->key = $key;
+        $reflect->description = ''; // Use a flatfile db driver? (e.g. https://github.com/ryangjchandler/orbit)
+        $reflect->className = $className;
 
-    $reflect->parameters  = $classParams;
-    $reflect->active      = false;
-    $reflect->components  = [];
-    $reflect->inDirectory = Str::remove('app/View/Components/', Str::remove($name, $path));
-    $reflect->isDirectory = false;
+        // Check for classless view
 
-    return $reflect->toArray();
-  }
+        $reflect->parameters = $classParams;
+        $reflect->active = false;
+        $reflect->components = [];
+        $reflect->inDirectory = Str::remove('app/View/Components/', Str::remove($name, $path));
+        $reflect->isDirectory = false;
 
-  public function toArray()
-  {
-    $array = [];
+        return $reflect->toArray();
+    }
 
-    foreach($this->only as $field) :
-      $array[$field] = $this->$field;
-    endforeach;
+    public function toArray()
+    {
+        $array = [];
 
-    return $array;
-  }
+        foreach ($this->only as $field) {
+            $array[$field] = $this->$field;
+        }
 
-  private function makeKey(string $path): string
-  {
-    $path = Str::replace('\\', '/', $path);
-    $name = basename($path);
-    $key  = explode('Components/', $path)[1];
-    $key  = (new Collection(explode('/', $key)))->map(function($slug){ return Str::snake($slug, '-'); })->join('.');
+        return $array;
+    }
 
-    return $key;
-  }
+    private function makeKey(string $path): string
+    {
+        $path = Str::replace('\\', '/', $path);
+        $name = basename($path);
+        $key = explode('Components/', $path)[1];
+        $key = (new Collection(explode('/', $key)))->map(function ($slug) {
+        return Str::snake($slug, '-');
+        })->join('.');
+
+        return $key;
+    }
 }
