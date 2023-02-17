@@ -2,6 +2,7 @@
 
 namespace Bladepack\Bladepack\Providers;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -60,7 +61,7 @@ class ServiceProvider extends BaseServiceProvider
             ], function ($view) use ($viewName) {
                 $view->with('appLayout', $viewName);
             });
-            
+
         });
     }
 
