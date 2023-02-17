@@ -38,7 +38,7 @@ class Bladepack extends Component
         return $this->render();
     }
 
-    public function view(): string
+    public function view($view, $data = [], $mergeData = []): string
     {
         return <<<'blade'
       @extends('bladepack::app')
