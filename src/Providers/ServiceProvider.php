@@ -2,8 +2,12 @@
 
 namespace Bladepack\Bladepack\Providers;
 
+use Bladepack\Bladepack\Http\Livewire\Bladepack;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -37,9 +41,32 @@ class ServiceProvider extends BaseServiceProvider
 
     public function loadRoutes()
     {
-        $this->loadRoutesFrom(
-            $this->path('routes/web.php')
-        );
+        if (! App::environment(['local', 'testing', 'development'])) {
+            return;
+        }
+
+        Route::get('bladepack/js/app.js', function () {
+            $manifest = File::get($this->path('public/build/manifest.json'));
+            $filePath = json_decode($manifest, true)['resources/js/bladepack.ts']['file'];
+            $script = File::get($this->path("public/build/{$filePath}"));
+
+            return response($script)->header('Content-Type', 'application/javascript');
+        });
+
+        Route::get('bladepack/css/app.css', function () {
+            $manifest = File::get($this->path('public/build/manifest.json'));
+            $filePath = json_decode($manifest, true)['resources/js/bladepack.css']['file'];
+            $script = File::get($this->path("public/build/{$filePath}"));
+
+            return response($script)->header('Content-Type', 'text/css');
+        });
+
+        Route::get('bladepack/logo.png', function () {
+            $img = File::get($this->path('resources/images/logo.png'));
+            return response($img)->header('Content-type','image/png');
+        });
+
+        Route::get('bladepack/{a?}', Bladepack::class)->name('bladepack');
     }
 
     public function loadTranslations()

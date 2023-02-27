@@ -1,0 +1,14 @@
+{
+  "resources/js/bladepack.css": {
+    "file": "assets/bladepack-aed3cc01.css",
+    "src": "resources/js/bladepack.css"
+  },
+  "resources/js/bladepack.ts": {
+    "css": [
+      "assets/bladepack-aed3cc01.css"
+    ],
+    "file": "assets/bladepack-2d07ee3d.js",
+    "isEntry": true,
+    "src": "resources/js/bladepack.ts"
+  }
+}

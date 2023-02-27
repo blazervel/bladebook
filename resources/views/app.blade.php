@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark js-focus-visible">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@lang('bladepack::bladepack.bladepack')</title>
-    <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}"/>
-    <script src="https://unpkg.com/petite-vue" defer init></script>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <link rel="shortcut icon" href="/bladepack/logo.png"/>
     <style>[v-cloak] { display: none }</style>
-    @include('bladepack::tailwind-config')
+    <link rel="stylesheet" href="/bladepack/css/app.css">
+    @livewireStyles
+    <script defer src="/bladepack/js/app.js"></script>
   </head>
-  <body class="font-sans antialiased h-full">
-    @yield('content') 
+  <body class="bg-white antialiased dark:bg-zinc-900 font-sans antialiased h-full">
+    {{ $slot }}
+    @livewireScripts
   </body>
 </html>
