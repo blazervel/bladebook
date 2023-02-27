@@ -1,8 +1,8 @@
-/** @type {import('vite').UserConfig} */
-
 import { defineConfig } from 'vite'
 import laravel, { refreshPaths } from 'laravel-vite-plugin'
+import path from 'path'
 
+/** @type {import('vite').UserConfig} */
 export default defineConfig({
     plugins: [
         laravel({
@@ -12,5 +12,8 @@ export default defineConfig({
                 'app/Http/Livewire/**',
             ],
         }),
-    ]
+    ],
+    // server: {
+    //     host: '127.0.0.1'
+    // }
 })

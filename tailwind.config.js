@@ -1,16 +1,4 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-    content: [
-    ],
-    theme: {
-        darkmode: 'class',
-        extend: {},
-    },
-    plugins: [
-        require('@tailwindcss/typography'),
-        require('@tailwindcss/forms'),
-    ],
-}
+const colors = require('tailwindcss/colors')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -38,6 +26,9 @@ module.exports = {
     },
     // typography: require('./typography'),
     extend: {
+      colors: {
+        bladepack: colors.red,
+      },
       boxShadow: {
         glow: '0 0 4px rgb(0 0 0 / 0.1)',
       },

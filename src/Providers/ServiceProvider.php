@@ -66,6 +66,9 @@ class ServiceProvider extends BaseServiceProvider
             return response($img)->header('Content-type','image/png');
         });
 
+        Route::get('bladepack/{pack}/{tab}', Bladepack::class)->name('bladepack');
+        Route::get('bladepack/{pack}/iframe', Bladepack::class)->name('bladepack');
+
         Route::get('bladepack/{a?}', Bladepack::class)->name('bladepack');
     }
 

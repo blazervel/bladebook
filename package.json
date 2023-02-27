@@ -2,7 +2,7 @@
   "name": "bladepack",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 5177",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
